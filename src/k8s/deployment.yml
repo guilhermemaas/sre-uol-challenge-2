@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github-api-consumer
+spec:
+  selector:
+    matchLabels:
+      app: github-api-consumer
+  template:
+    metadata:
+      labels:
+        app: github-api-consumer
+    spec:
+      containers:
+      - name: github-api-consumer
+        image: gmaas2/github-api-consumer:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5000
