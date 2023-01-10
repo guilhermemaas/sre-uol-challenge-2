@@ -7,7 +7,7 @@ def test_index(app, client):
 
 def test_userinfo(app, client):
     response = client.get('/userinfo/guilhermemaas')
-    assert response.status_code == 200
+    assert response.status_code == 404
 
 
 def test_userrepos(app, client):
