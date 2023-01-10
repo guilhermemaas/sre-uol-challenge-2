@@ -8,6 +8,8 @@ from operator import itemgetter
 import logging 
 import os
 from datetime import date
+from flasgger import Swagger
+from flasgger.utils import swag_from
 
 class GitHubApi:
     def __init__(self, github_user: str, github_base_URL: str):
@@ -18,35 +20,76 @@ class GitHubApi:
         """
         Retorna todos os dados de um usuário público do Github através do endpoint /users
         """
+        
         URL = f'{self.github_base_URL}/users/{self.github_user}'
+        
         response = requests.get(URL)
+        
         return response.json()
 
     def get_github_user_repos(self) -> list:
         """
         Retorna todos os repositórios públicos de um usuário do Github
         """
+        
         URL = f'{self.github_base_URL}/users/{self.github_user}/repos'
+        
         response = requests.get(URL)
+        
         return response.json()
 
     def get_github_user_gists(self) -> list:
         """
         Retorna todos os gists públicos de um usuário do Github
         """
+        
         URL = f'{self.github_base_URL}/users/{self.github_user}/gists'
+        
         response = requests.get(URL)
+        
         return response.json()
 
     def get_github_user_commits(self) -> list:
         """
-        TO-DO
+        Retorna todos os commits de um repositório, do mais novo para o mais antigo
+        Exemplo:
+        https://api.github.com/repos/guilhermemaas/container-expert-linuxtips/commits
         """
-        URL = f'{self.github_base_URL}/users/{self.github_user}/'
+
+        URL = f'{self.github_base_URL}/users/{self.github_user}/repos'
+
+        response = requests.get(URL)
+
+        github_user_repos = response.json()
+
+        github_repos_commits_urls = []
+
+        for repo in github_user_repos:
+            if 'sha' in repo['commits_url']:
+                repo['commits_url'] = repo['commits_url'].replace('{/sha}','')
+                print(f'COMMIT_URL:{repo["commits_url"]}')
+                github_repos_commits_urls.append(repo['commits_url'])
+            else:
+                pass
+
+        github_user_commits_default = []
+
+        for commit_url in github_repos_commits_urls:
+            print(f'commit: {commit_url}')
+            github_user_commits_default.append(requests.get(commit_url).json())
+        
+        #print(github_user_commits_default)
+
+        return github_user_commits_default
 
 
 app = Flask(__name__)
+
+#Gera o endpoint /metrics utilizando o Flask Prometheus Exporter
 metrics = PrometheusMetrics(app)
+
+#Gera a documentação com Swagger utilizando o Flasgger
+swagger = Swagger(app)
 
 github_BASE_URL = 'https://api.github.com'
 
@@ -54,7 +97,7 @@ github_BASE_URL = 'https://api.github.com'
 @app.route('/home')
 @app.route('/index')
 @app.route('/entry')
-def index() -> 'html':
+def index():
     """
     Página default ao chamar URL's "raíz"
     """
@@ -63,8 +106,9 @@ def index() -> 'html':
         the_tittle=f'SRE UOL - Challenge 2: API Git Hub - Data: {date.isoformat(date.today())}')
 
 
-@app.route('/userinfo', methods=['GET'])
-def userinfo():
+@app.route('/userinfo/<username>', methods=['GET'])
+@swag_from("swagger/userinfo.yml")
+def userinfo(username):
     """
     Esse endpoint retorna os seguintes dados de um usuário do Git Hub, em formato JSON:
     - Login do usuário
@@ -80,9 +124,12 @@ def userinfo():
     """
     
     #Recebe a informação vinda da chamada em formato .json
-    content = request.json
+    #content = request.json
     
-    github_username = content['github_username']
+    #github_username = content['github_username']
+    #github_username = github_username
+
+    github_username = username
 
     #Instância um objeto para chamada na api do Git Hub contendo as informações de usuário URL base do Git Hub
     github_request = GitHubApi(github_username, github_BASE_URL)
@@ -108,8 +155,9 @@ def userinfo():
     return jsonify(github_user_info)
 
 
-@app.route('/userrepos', methods=['GET'])
-def userrepos():
+@app.route('/userrepos/<username>', methods=['GET'])
+@swag_from("swagger/userrepos.yml")
+def userrepos(username):
     """
     Esse endpoint retorna os seguintes dados referentes aos repositórios de um
     usuário do Git Hub, em formato JSON:
@@ -120,6 +168,7 @@ def userrepos():
     - Login do owner/dono do repositório
     - URL git do repositório
     - URL ssh do repositório
+    - URL com listagem de commits no repositório
     - Data de criação
     - Último push/alteração
     - Branch default/padrão
@@ -127,9 +176,10 @@ def userrepos():
     """
     
     #Recebe a informação vinda da chamada em formato .json
-    content = request.json
+    #content = request.json
     
-    github_username = content['github_username']
+    #github_username = content['github_username']
+    github_username = username
 
     #Instância um objeto para chamada na api do Git Hub contendo as informações de usuário URL base do Git Hub
     github_request = GitHubApi(github_username, github_BASE_URL)
@@ -151,6 +201,7 @@ def userrepos():
             'owner': repo['owner']['login'],
             'git_url': repo['git_url'],
             'ssh_url': repo['ssh_url'],
+            'commits_url': repo['commits_url'],
             'creation_date': repo['created_at'],
             'latest_push': repo['pushed_at'],
             'default_branch': repo['default_branch'],
@@ -170,8 +221,9 @@ def userrepos():
     return jsonify(github_user_repos)
 
 
-@app.route('/usergists', methods=['GET'])
-def usergists():
+@app.route('/usergists/<username>', methods=['GET'])
+@swag_from("swagger/usergists.yml")
+def usergists(username):
     """
     Esse endpoint retorna os seguintes dados referentes aos gists de um
     usuário do Git Hub, em formato JSON:
@@ -184,9 +236,10 @@ def usergists():
     """
     
     #Recebe a informação vinda da chamada em formato .json
-    content = request.json
+    #content = request.json
     
-    github_username = content['github_username']
+    #github_username = content['github_username']
+    github_username = username
 
     #Instância um objeto para chamada na api do Git Hub contendo as informações de usuário URL base do Git Hub
     github_request = GitHubApi(github_username, github_BASE_URL)
@@ -216,6 +269,42 @@ def usergists():
         github_temp_gist.clear()
 
     return jsonify(github_user_gists)
+
+
+@app.route('/latestcommits', methods=['GET'])
+@swag_from("swagger/latestcommits.yml")
+def latestcommits():
+    """
+    Esse endpoint retorna os últimos commits/contribuições de um usuário do Git Hub
+    em seus repositórios, em formato JSON:
+    - 
+    """
+    
+    #Recebe a informação vinda da chamada em formato .json
+    content = request.json
+    
+    github_username = content['github_username']
+
+    #Instância um objeto para chamada na api do Git Hub contendo as informações de usuário URL base do Git Hub
+    github_request = GitHubApi(github_username, github_BASE_URL)
+    
+    #Recebe uma lista de dicionários de dados com as informações padrão da API do Git Hub
+    #contendo as informações sobre os repositórios do usuário
+    github_user_commits_default = github_request.get_github_user_commits()
+
+    #Cria uma lista com todas as URL's de commits de cada repositório do usuário
+
+    #github_repos_commits_urls = []
+    #github_temp_gist = {}
+
+    
+    #Adiciona o gist em questão à lista que será retornanda no endpoint
+    #github_user_gists.append(github_temp_gist.copy())
+
+    #Limpa o dicionário temporário utilizado para percorrer a lista retornada pela API do Git Hub
+    #github_temp_gist.clear()
+
+    return jsonify(github_user_commits_default)
     
 
 if __name__ == '__main__':

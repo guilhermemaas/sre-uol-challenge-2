@@ -28,5 +28,4 @@ jobs:
           context: ./app/
           file: ./app/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sre-uol-github-api-latest
-    
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sre-uol-github-api    
