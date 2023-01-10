@@ -33,6 +33,7 @@ jobs:
                   
 
   build:
+    needs: pytest
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
