@@ -1,5 +1,5 @@
 summary: "/userinfo"
-description: "Retorna informações referentes a um usuário do Git Hub"
+description: "Retorna um resumo de informações referentes a um usuário do GitHub"
 produces:
 - "application/json"
 parameters:
@@ -7,21 +7,67 @@ parameters:
   name: "username"
   type: "string"
   required: "true"
-  description: "Informe um usuário do Git Hub"
+  description: "Usuário do GitHub"
   example: "guilhermemaas"
 responses:
   200:
-    description: "Success"
     schema:
       type: "object"
       properties:
-        data:
-          type: "object"
-        status:
+        account_creation_date:
+          type: "date"
+        avatar_url:
           type: "string"
-        message:
+          example: "https://avatars.githubusercontent.com/u/33131061?v=4"
+        bio:
           type: "string"
+          example: "Currently focused on learning more about the DevOps culture and the technologies that permeate it."
+        email:
+          type: "string"
+          example: "guilherme.maas@gmail.com"
+        login:
+          type: "string"
+          example: "guilhermemaas"
+        qt_followers:
+          type: "integer"
+          example: 10
+        qt_following:
+          type: "integer"
+          example: 24
+        qt_public_gists:
+          type: "integer"
+          example: 2
+        qt_public_repos:
+          type: "integer"                                                 
+          example: 52
+        username:
+          type: "string"
+          example: "Guilherme Augusto Maas"
   400:
-    description: "Erro ao processar solicitação (4xx)."
+    description: "4xx"
+    schema:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          example: 404
+        description:
+          type: "string"
+          example: '"description": "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."'
+        name:
+          type: "string"
+          example: '"name": "Not Found"'
   500:
-    description: "Erro ao processar solicitação (5xx)."
+    description: "5xx"
+    schema:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          example: 500
+        description:
+          type: "string"
+          example: '"description": "The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application."'
+        name:
+          type: "string"
+          example: '"name": "Internal Server Error"'

@@ -1,5 +1,5 @@
-summary: "/usergists"
-description: "Retorna informações referentes aos gists de um usuário do GitHub"
+summary: "/userinfo"
+description: "Retorna informações referentes aos últimos commits/contribuições de um usuário no GitHub"
 produces:
 - "application/json"
 parameters:
@@ -14,30 +14,25 @@ responses:
     schema:
       type: "object"
       properties:
-        creation_date:
-          type: "date"
-          example: "2021-09-07T18:22:35Z"
-        files:
+        commits_details:
           type: "dict"
           example: '{
-          "Jenkins BlueOcean (Restar Always, Windows)": {
-            "filename": "Jenkins BlueOcean (Restar Always, Windows)",
-            "language": null,
-            "raw_url": "https://gist.githubusercontent.com/guilhermemaas/adf1d09a3617701c5d944b23e5522e53/raw/6fdfdeb085dd2b76182d54c103118d07c555e7f6/Jenkins%20BlueOcean%20(Restar%20Always%2C%20Windows)",
-            "size": 337,
-            "type": "text/plain"'
-        id:
-          type: "string"
-          example: "adf1d09a3617701c5d944b23e5522e53"
-        latest_update:
-          type: "date"
-          example: "2021-09-07T18:25:22Z"
-        owener:
-          type: "string"
-          example: "guilhermemaas"
-        url:
-          type: "string"
-          example: "https://api.github.com/gists/adf1d09a3617701c5d944b23e5522e53"
+            "author": {
+              "email": "guilherme.maas@gmail.com",
+              "name": "Guilherme Augusto Maas"
+            },
+            "distinct": true,
+            "message": "poc k8s do",
+            "sha": "12af9b273c03cf4530776bdd1470c3fd2cb429a7",
+            "url": "https://api.github.com/repos/guilhermemaas/kubedev.io/commits/12af9b273c03cf4530776bdd1470c3fd2cb429a7"
+              }
+            ],
+            "id": "25575964544",
+            "push_date": "2022-11-30T22:08:36Z",
+            "repo_id": 563013920,
+            "repo_name": "guilhermemaas/kubedev.io",
+            "repo_url": "https://api.github.com/repos/guilhermemaas/kubedev.io"
+            }'
   400:
     description: "4xx"
     schema:

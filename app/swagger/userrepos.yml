@@ -1,5 +1,5 @@
 summary: "/userrepos"
-description: "Retorna informações referentes aos repositórios de um usuário do Git Hub"
+description: "Retorna informações referentes aos repositórios públicos de um usuário do GitHub"
 produces:
 - "application/json"
 parameters:
@@ -7,19 +7,71 @@ parameters:
   name: "username"
   type: "string"
   required: "true"
+  description: "Usuário do GitHub"
+  example: "guilhermemaas"
 responses:
   200:
-    description: "Success"
     schema:
       type: "object"
       properties:
-        data:
-          type: "object"
-        status:
+        commits_url:
           type: "string"
-        message:
+          example: "https://api.github.com/repos/guilhermemaas/DevOpsExtreme/commits{/sha}"
+        creation_date:
+          type: "date"
+          example: "2021-08-13T09:04:28Z"
+        default_branch:
           type: "string"
+          example: "main"
+        description:
+          type: "string"
+          example: "Repositório com palestras e arquivos relacionados ao ev"
+        full_name:
+          type: "string"
+          example: "guilhermemaas/DevOpsExtreme"
+        id:
+          type: "integer"
+          example: 395586145
+        latest_push:
+          type: "date"
+          example: "2021-08-13T07:49:28Z"
+        name:
+          type: "string"
+          example: "DevOpsExtreme"
+        owner:
+          type: "string"                                                 
+          example: "guilhermemaas"
+        qt_open_issues:
+          type: "integer"
+          example: 0
+        ssh_url:
+          type: "string"
+          example: "git@github.com:guilhermemaas/DevOpsExtreme.git"
   400:
-    description: "Erro ao processar solicitação (4xx)."
+    description: "4xx"
+    schema:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          example: 404
+        description:
+          type: "string"
+          example: '"description": "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."'
+        name:
+          type: "string"
+          example: '"name": "Not Found"'
   500:
-    description: "Erro ao processar solicitação (5xx)."
+    description: "5xx"
+    schema:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          example: 500
+        description:
+          type: "string"
+          example: '"description": "The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application."'
+        name:
+          type: "string"
+          example: '"name": "Internal Server Error"'

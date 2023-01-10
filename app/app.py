@@ -1,8 +1,5 @@
 import requests
-import pytest 
-import json
-from flask import Flask, request, jsonify, render_template
-from flask.wrappers import Response
+from flask import Flask, jsonify, render_template, abort, json
 from prometheus_flask_exporter import PrometheusMetrics
 from operator import itemgetter
 import logging 
@@ -10,77 +7,9 @@ import os
 from datetime import date
 from flasgger import Swagger
 from flasgger.utils import swag_from
-
-class GitHubApi:
-    def __init__(self, github_user: str, github_base_URL: str):
-        self.github_user = github_user
-        self.github_base_URL = github_base_URL
-
-    def get_github_user_info(self) -> dict:
-        """
-        Retorna todos os dados de um usuário público do Github através do endpoint /users
-        """
-        
-        URL = f'{self.github_base_URL}/users/{self.github_user}'
-        
-        response = requests.get(URL)
-        
-        return response.json()
-
-    def get_github_user_repos(self) -> list:
-        """
-        Retorna todos os repositórios públicos de um usuário do Github
-        """
-        
-        URL = f'{self.github_base_URL}/users/{self.github_user}/repos'
-        
-        response = requests.get(URL)
-        
-        return response.json()
-
-    def get_github_user_gists(self) -> list:
-        """
-        Retorna todos os gists públicos de um usuário do Github
-        """
-        
-        URL = f'{self.github_base_URL}/users/{self.github_user}/gists'
-        
-        response = requests.get(URL)
-        
-        return response.json()
-
-    def get_github_user_commits(self) -> list:
-        """
-        Retorna todos os commits de um repositório, do mais novo para o mais antigo
-        Exemplo:
-        https://api.github.com/repos/guilhermemaas/container-expert-linuxtips/commits
-        """
-
-        URL = f'{self.github_base_URL}/users/{self.github_user}/repos'
-
-        response = requests.get(URL)
-
-        github_user_repos = response.json()
-
-        github_repos_commits_urls = []
-
-        for repo in github_user_repos:
-            if 'sha' in repo['commits_url']:
-                repo['commits_url'] = repo['commits_url'].replace('{/sha}','')
-                print(f'COMMIT_URL:{repo["commits_url"]}')
-                github_repos_commits_urls.append(repo['commits_url'])
-            else:
-                pass
-
-        github_user_commits_default = []
-
-        for commit_url in github_repos_commits_urls:
-            print(f'commit: {commit_url}')
-            github_user_commits_default.append(requests.get(commit_url).json())
-        
-        #print(github_user_commits_default)
-
-        return github_user_commits_default
+from werkzeug.exceptions import HTTPException
+#Mapeamento dos métodos default da API do GitHub
+from github import GitHubApi
 
 
 app = Flask(__name__)
@@ -91,7 +20,45 @@ metrics = PrometheusMetrics(app)
 #Gera a documentação com Swagger utilizando o Flasgger
 swagger = Swagger(app)
 
-github_BASE_URL = 'https://api.github.com'
+github_base_url = 'https://api.github.com'
+
+
+app_envs = {
+    'environment': os.getenv('GITHUB_API_ENV'), #dev/prod
+    'log_level': os.getenv('GITHUB_API_LOG_LEVEL'), #DEBUG, INFO, WARNING, ERROR, CRITICAL, INFO
+    'github_base_url': os.getenv('GITHUB_API_BASE_URL') #Exemplo: https://api.github.com
+}
+
+#Definição de log level conforme ambiente (dev/prod)
+if app_envs['environment'] == 'dev' or app_envs['log_level'] == 'DEBUG':
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+elif app_envs['environment'] == 'prod' or app_envs['log_level'] == 'WARNING':
+    logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+elif app_envs['log_level'] in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL', 'INFO']:
+    logging.basicConfig(level=app_envs['log_level'], format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+else:
+    app.logger.info('Nenhum nível de log foi declarado em variáveis de ambiente. Será ignorado.')
+
+
+@app.errorhandler(HTTPException)
+def handle_exception(error):
+    """
+    Retorna um JSON contendo um tratamento e descrição do item.
+    """
+    response = error.get_response()
+
+    response.data = json.dumps({
+        "code": error.code,
+        "name": error.name,
+        "description": error.description,
+    })
+    response.content_type = "application/json"
+    
+    return response
+
+
+app.logger.info('SRE UOL Challenge 2: API GitHub')
+
 
 @app.route('/')
 @app.route('/home')
@@ -103,14 +70,34 @@ def index():
     """
 
     return render_template('index.html',
-        the_tittle=f'SRE UOL - Challenge 2: API Git Hub - Data: {date.isoformat(date.today())}')
+        the_tittle=f'SRE UOL Challenge 2: API GitHub - Data: {date.isoformat(date.today())}')
+
+
+@app.route('/health')
+def health():
+    """
+    A API do GitHub estar disponível/respondendo é imprescindível para o funcionamento da
+    aplicação, desta maneira, será realizado um teste de chamada para identificar o 
+    seu funcionamento
+    """
+    github_base_url = 'https://api.github.com'
+    URL = f'{github_base_url}/users/github'
+    
+    response = requests.get(URL)
+
+    print(response.status_code)
+
+    if response.status_code == 200:
+        return str(response.status_code), 'API GitHub Ok'
+    else:
+        return str(response.status_code), 'API GitHub indisponível'
 
 
 @app.route('/userinfo/<username>', methods=['GET'])
 @swag_from("swagger/userinfo.yml")
 def userinfo(username):
     """
-    Esse endpoint retorna os seguintes dados de um usuário do Git Hub, em formato JSON:
+    Esse endpoint retorna os seguintes dados de um usuário do GitHub, em formato JSON:
     - Login do usuário
     - Nome do usuário
     - E-mail do usuário
@@ -122,20 +109,17 @@ def userinfo(username):
     - Quantidade de usuários que está seguindo
     - Data de criação da conta
     """
-    
-    #Recebe a informação vinda da chamada em formato .json
-    #content = request.json
-    
-    #github_username = content['github_username']
-    #github_username = github_username
 
     github_username = username
 
-    #Instância um objeto para chamada na api do Git Hub contendo as informações de usuário URL base do Git Hub
-    github_request = GitHubApi(github_username, github_BASE_URL)
+    #Instância um objeto para chamada na api do GitHub contendo as informações de usuário URL base do GitHub
+    github_request = GitHubApi(github_username, github_base_url)
     
-    #Recebe um dicionário de dados com as informações padrão da API do Git Hub (/users)
-    github_user_info_default = github_request.get_github_user_info()
+    #Recebe um dicionário de dados com as informações padrão da API do GitHub (/users)
+    try:
+        github_user_info_default = github_request.get_github_user_info()
+    except Exception as err:
+        app.logger.error(str(err))
 
     #Ajusta um dicionário temporário somente os campos que queremos retornar na API
     github_user_info = {
@@ -152,7 +136,10 @@ def userinfo(username):
     }
 
     #Retorna as informações dos campos citados acima
-    return jsonify(github_user_info)
+    try:
+        return jsonify(github_user_info)
+    except IndexError:
+        abort(404)
 
 
 @app.route('/userrepos/<username>', methods=['GET'])
@@ -160,7 +147,7 @@ def userinfo(username):
 def userrepos(username):
     """
     Esse endpoint retorna os seguintes dados referentes aos repositórios de um
-    usuário do Git Hub, em formato JSON:
+    usuário do GitHub, em formato JSON:
     - Nome do repositório
     - ID do repositório
     - Nome completo do repositório
@@ -181,16 +168,19 @@ def userrepos(username):
     #github_username = content['github_username']
     github_username = username
 
-    #Instância um objeto para chamada na api do Git Hub contendo as informações de usuário URL base do Git Hub
-    github_request = GitHubApi(github_username, github_BASE_URL)
+    #Instância um objeto para chamada na api do GitHub contendo as informações de usuário URL base do GitHub
+    github_request = GitHubApi(github_username, github_base_url)
     
-    #Recebe um dicionário de dados com as informações padrão da API do Git Hub (/users)
-    github_user_repos_default = github_request.get_github_user_repos()
+    #Recebe um dicionário de dados com as informações padrão da API do GitHub (/users)
+    try:
+        github_user_repos_default = github_request.get_github_user_repos()
+    except Exception as err:
+        app.logger.error(str(err))
 
     github_user_repos = []
     github_temp_repo = {}
 
-    #Percore a lista de repositórios retornado pela API do Git Hub adicionando a um dicionário temporário os 
+    #Percore a lista de repositórios retornado pela API do GitHub adicionando a um dicionário temporário os 
     #campos desejados
     for repo in github_user_repos_default:
         github_temp_repo = {
@@ -211,7 +201,7 @@ def userrepos(username):
         #Adiciona o repositório em questão à lista que será retornanda no endpoint
         github_user_repos.append(github_temp_repo.copy())
 
-        #Limpa o dicionário temporário utilizado para percorrer a lista retornada pela API do Git Hub
+        #Limpa o dicionário temporário utilizado para percorrer a lista retornada pela API do GitHub
         github_temp_repo.clear()
 
     #Ordena a lista em ordem alfabética para apresentação
@@ -226,7 +216,7 @@ def userrepos(username):
 def usergists(username):
     """
     Esse endpoint retorna os seguintes dados referentes aos gists de um
-    usuário do Git Hub, em formato JSON:
+    usuário do GitHub, em formato JSON:
     - ID do gist
     - URL do gist
     - Arquivo(s)
@@ -241,14 +231,16 @@ def usergists(username):
     #github_username = content['github_username']
     github_username = username
 
-    #Instância um objeto para chamada na api do Git Hub contendo as informações de usuário URL base do Git Hub
-    github_request = GitHubApi(github_username, github_BASE_URL)
+    #Instância um objeto para chamada na api do GitHub contendo as informações de usuário URL base do GitHub
+    github_request = GitHubApi(github_username, github_base_url)
     
-    #Recebe um dicionário de dados com as informações padrão da API do Git Hub (/users)
-    github_user_gists_default = github_request.get_github_user_gists()
-
+    #Recebe um dicionário de dados com as informações padrão da API do GitHub (/users)
+    try:
+        github_user_gists_default = github_request.get_github_user_gists()
+    except Exception as err:
+        app.logger.error(str(err))
+    
     #Ajusta um dicionário temporário somente os campos que queremos retornar na API
-
     github_user_gists = []
     github_temp_gist = {}
 
@@ -265,46 +257,67 @@ def usergists(username):
         #Adiciona o gist em questão à lista que será retornanda no endpoint
         github_user_gists.append(github_temp_gist.copy())
 
-        #Limpa o dicionário temporário utilizado para percorrer a lista retornada pela API do Git Hub
+        #Limpa o dicionário temporário utilizado para percorrer a lista retornada pela API do GitHub
         github_temp_gist.clear()
 
     return jsonify(github_user_gists)
 
 
-@app.route('/latestcommits', methods=['GET'])
-@swag_from("swagger/latestcommits.yml")
-def latestcommits():
+@app.route('/usercommits/<username>', methods=['GET'])
+@swag_from("swagger/usercommits.yml")
+def usercommits(username):
     """
-    Esse endpoint retorna os últimos commits/contribuições de um usuário do Git Hub
-    em seus repositórios, em formato JSON:
-    - 
+    Esse endpoint retorna os seguintes dados referentes aos últimos commits de um
+    usuário do GitHub, através do endpoint de eventos em formato JSON:
+    - ID do evento
+    - ID do repositório
+    - Nome do repositório
+    - URL do repositório
+    - URL do commit
+    - Mensagem do commit
+    - Autor do commit
+    - Data/Hora do Push
     """
     
     #Recebe a informação vinda da chamada em formato .json
-    content = request.json
+
+    github_username = username
+
+    #Instância um objeto para chamada na api do GitHub contendo as informações de usuário URL base do GitHub
+    github_request = GitHubApi(github_username, github_base_url)
     
-    github_username = content['github_username']
+    #Recebe um dicionário de dados com as informações padrão da API do GitHub (/users/username/events)
+    try:
+        github_user_events_default = github_request.get_github_user_events()
+    except Exception as err:
+        app.logger.error(str(err))
 
-    #Instância um objeto para chamada na api do Git Hub contendo as informações de usuário URL base do Git Hub
-    github_request = GitHubApi(github_username, github_BASE_URL)
-    
-    #Recebe uma lista de dicionários de dados com as informações padrão da API do Git Hub
-    #contendo as informações sobre os repositórios do usuário
-    github_user_commits_default = github_request.get_github_user_commits()
+    #Ajusta um dicionário temporário somente os campos que queremos retornar na API e eventos do tipo
+    #"PushEvent" para buscar os últimos commits
+    github_user_commits = []
+    github_temp_event = {}
 
-    #Cria uma lista com todas as URL's de commits de cada repositório do usuário
+    for event in github_user_events_default:
 
-    #github_repos_commits_urls = []
-    #github_temp_gist = {}
+        if event['type'] == "PushEvent":
+            github_temp_event = {
+                'id': event['id'],
+                'repo_id': event['repo']['id'],
+                'repo_name': event['repo']['name'],
+                'repo_url': event['repo']['url'],
+                'commits_details': event['payload']['commits'],
+                'push_date': event['created_at'],
+            }
+            #Adiciona o gist em questão à lista que será retornanda no endpoint
+            github_user_commits.append(github_temp_event.copy())
 
-    
-    #Adiciona o gist em questão à lista que será retornanda no endpoint
-    #github_user_gists.append(github_temp_gist.copy())
+            #Limpa o dicionário temporário utilizado para percorrer a lista retornada pela API do GitHub
+            github_temp_event.clear()
 
-    #Limpa o dicionário temporário utilizado para percorrer a lista retornada pela API do Git Hub
-    #github_temp_gist.clear()
+        else:
+            pass
 
-    return jsonify(github_user_commits_default)
+    return jsonify(github_user_commits)
     
 
 if __name__ == '__main__':
