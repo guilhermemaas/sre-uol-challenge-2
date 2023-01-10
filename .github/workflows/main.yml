@@ -67,7 +67,9 @@ jobs:
 
   build:
     name: Build and Push Docker Image
-    needs: pytest
+    needs: 
+      - pytest
+      - coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
