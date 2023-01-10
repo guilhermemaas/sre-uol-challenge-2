@@ -61,6 +61,7 @@ jobs:
 
       - name: Generate Coverage Report
         run: |
+          cd app
           coverage run -m pytest
           coverage report
 
