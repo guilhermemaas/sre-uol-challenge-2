@@ -8,7 +8,6 @@ from datetime import date
 from flasgger import Swagger
 from flasgger.utils import swag_from
 from werkzeug.exceptions import HTTPException
-#Mapeamento dos métodos default da API do GitHub
 from github import GitHubApi
 
 

@@ -29,6 +29,7 @@ jobs:
 
       - name: Testes unitários
         run: |
+          cd app
           python -m pytest
                   
 
