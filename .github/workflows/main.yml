@@ -106,7 +106,7 @@ jobs:
         uses: stefanprodan/helm-gh-pages@master
         with:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
-          charts_dir: charts/
+          charts_dir: k8s/
           repository: gmaas-github-api 
           branch: main
           target_dir: charts/
