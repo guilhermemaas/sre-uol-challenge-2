@@ -1,0 +1,47 @@
+  
+version: '3.4'
+services:
+  gmaas-github-api:
+    image: gmaas2/gmaas-github-api:latest
+    ports:
+      - 5000:5000
+    environment:
+      prometheus.io/scrape: "true"
+      prometheus.io/path: "/metrics"
+      prometheus.io/port: "5000"
+    networks: 
+      - gmaas-github-api_network   
+  prometheus:
+    image: prom/prometheus:v2.22.0
+    depends_on:
+      - gmaas-github-api
+    #volumes:
+    #  - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    #  - ./alert-rules.yml:/etc/prometheus/alert-rules.rules
+    networks: 
+      - gmaas-github-api_network
+    ports:
+      - 9090:9090
+  grafana:
+    image: grafana/grafana:7.3.3
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks: 
+      - gmaas-github-api_network  
+  alert-manger:
+    image: prom/alertmanager:v0.21.0
+    #volumes: 
+    #  - ./alert-manager.yml:/etc/prometheus/alert-manager.yml
+    #command:
+    #  - '--config.file=/etc/prometheus/alert-manager.yml'
+    ports: 
+      - 9093:9093
+    depends_on:
+      - prometheus
+    networks: 
+      - gmaas-github-api_network
+networks: 
+  gmaas-github-api_network:
+    driver: bridge

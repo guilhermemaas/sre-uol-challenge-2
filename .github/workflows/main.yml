@@ -91,7 +91,7 @@ jobs:
           context: ./app/
           file: ./app/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/poc-github-api:latest 
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:latest 
 
   helm:
     name: Helm Chart

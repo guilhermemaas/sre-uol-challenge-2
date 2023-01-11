@@ -16,10 +16,16 @@ spec:
       name: {{ $.Release.Name }}
       labels:
         app: {{ $.Release.Name }}
+      {{- if eq $.Values.prometheus.enabled true }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "5000"
+      {{- end }}
     spec:
       containers:
       - name: {{ $.Release.Name }}
-        image: gmaas2/poc-github-api:latest
+        image: gmaas2/github-api:latest
         imagePullPolicy: {{ .imagePullPolicy }}
         {{- if eq .livenessProbe.enabled true }}
         livenessProbe:

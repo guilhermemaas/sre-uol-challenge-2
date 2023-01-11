@@ -1,6 +1,6 @@
 
 
-Obrigado/Thanks! {{ .Chart.Name }}.
+Thanks/Obrigado! {{ .Chart.Name }}.
 Release {{ .Release.Name }}.
 For more information/Para mais informações:
 $ helm status {{ .Release.Name }}

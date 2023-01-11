@@ -54,3 +54,6 @@ service:
     - name: http
       port: 5000
       targetPort: 5000
+
+prometheus:
+  enabled: true
