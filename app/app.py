@@ -23,7 +23,6 @@ github_base_url = 'https://api.github.com'
 
 GITHUB_API_ENV = os.getenv('GITHUB_API_ENV') #dev/prod
 GITHUB_API_LOG_LEVEL = os.getenv('GITHUB_API_LOG_LEVEL') #DEBUG, INFO, WARNING, ERROR, CRITICAL, INFO
-GITHUB_API_BASE_URL = os.getenv('GITHUB_API_BASE_URL') #Exemplo: https://api.github.com
 
 #Definição de log level conforme ambiente (dev/prod)
 if GITHUB_API_ENV == 'dev' or GITHUB_API_LOG_LEVEL == 'DEBUG':
@@ -89,6 +88,14 @@ def health():
         return 'Unhealthy'
 
 
+@app.route('/read')
+def read():
+    """
+    Endpoint retorna o status que a aplicação está disponível para requests
+    """
+    return 'Ready'
+
+
 @app.route('/userinfo/<username>', methods=['GET'])
 @swag_from("swagger/userinfo.yml")
 def userinfo(username):
@@ -130,12 +137,8 @@ def userinfo(username):
         'qt_following': github_user_info_default['following'],
         'account_creation_date': github_user_info_default['created_at']
     }
-
-    #Retorna as informações dos campos citados acima
-    try:
-        return jsonify(github_user_info)
-    except IndexError:
-        abort(404)
+    
+    return jsonify(github_user_info)
 
 
 @app.route('/userrepos/<username>', methods=['GET'])

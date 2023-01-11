@@ -1,0 +1,10 @@
+{{- if eq .Values.configmap.enabled true }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+data:
+  GITHUB_API_LOG_LEVEL: {{ .Values.configmap.GITHUB_API_LOG_LEVEL }}
+{{- end }}

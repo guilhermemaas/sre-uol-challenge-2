@@ -1,28 +1,62 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: poc-github-api
-  namespace: default
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: poc-github-api
+    app: {{ .Release.Name }}
 spec:
-  replicas: 1
+  {{- with .Values.container }}
+  replicas: {{ .replicas }}
   selector:
     matchLabels:
-      app: poc-github-api
+      app: {{ $.Release.Name }}
   template:
     metadata:
-      name: poc-github-api
+      name: {{ $.Release.Name }}
       labels:
-        app: poc-github-api
+        app: {{ $.Release.Name }}
     spec:
       containers:
-      - name: poc-github-api
-        image: gmaas2/sre-uol-github-api:latest
+      - name: {{ $.Release.Name }}
+        image: gmaas2/poc-github-api:latest
+        imagePullPolicy: {{ .imagePullPolicy }}
+        {{- if eq .livenessProbe.enabled true }}
+        livenessProbe:
+          httpGet:
+            path: {{ .livenessProbe.httpGet.path }}
+            port: {{ .livenessProbe.httpGet.port }}
+            scheme: {{ .livenessProbe.httpGet.Scheme }}
+          timeoutSeconds: {{ .livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ .livenessProbe.failureThreshold }}
+          periodSeconds: {{ .livenessProbe.periodSeconds }} #Default 60. Esse tempo de 300 seg é por conta do Rate Limit da API do Github. A ideia é não bloquear o acesso.
+          successThreshold: {{ .livenessProbe.successThreshold }}
+          initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds }}
+        {{- end }}
+        {{- if eq .readinessProbe.enabled true }}
+        readinessProbe:
+          httpGet:
+            path: {{ .readinessProbe.httpGet.path }}
+            port: {{ .readinessProbe.httpGet.port }}
+            scheme: {{ .readinessProbe.httpGet.scheme }}
+          timeoutSeconds: {{ .readinessProbe.timeoutSeconds }}
+          failureThreshold: {{ .readinessProbe.failureThreshold }}
+          periodSeconds: {{ .readinessProbe.periodSeconds }}
+          successThreshold: {{ .readinessProbe.successThreshold }}
+          initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds }}
+        {{- end }}
+        envFrom:
+        - configMapRef:
+            name: {{ $.Release.Name }}
+        ports:
+        {{- range .ports }}
+        -  name: {{ .name }}
+           containerPort: {{ .containerPort }}      
+        {{- end }}
+        {{- if eq .resources.enabled true }}      
         resources:
           limits:
-            memory: "64Mi"
-            cpu: "250m"
-        ports:
-        -  name: http
-           containerPort: 5000
+            memory: {{ .resources.limits.memory }}
+            cpu: {{ .resources.limits.cpu }}
+        {{- end }}
+  {{- end }}
