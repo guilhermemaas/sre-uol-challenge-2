@@ -10,27 +10,27 @@ def test_index(app, client):
 
 def test_userinfo(app, client):
     
-    response = client.get('/userinfo/guilhermemaas')
+    response = client.get('/user/guilhermemaas/info')
 
     assert response.status_code == 200
 
 
 def test_userrepos(app, client):
     
-    response = client.get('/userrepos/guilhermemaas')
+    response = client.get('/user/guilhermemaas/repos')
     
     assert response.status_code == 200
 
 
 def test_usergists(app, client):
     
-    response = client.get('/usergists/guilhermemaas')
+    response = client.get('/user/guilhermemaas/gists')
     
     assert response.status_code == 200
 
 
 def test_usercommits(app, client):
     
-    response = client.get('/usercommits/guilhermemaas')
+    response = client.get('/user/guilhermemaas/commits')
     
     assert response.status_code == 200
