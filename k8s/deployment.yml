@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: github-api-consumer
-        image: gmaas2/github-api-consumer:latest
+        image: gmaas2/sre-uol-github-api:latest
         resources:
           limits:
             memory: "128Mi"
