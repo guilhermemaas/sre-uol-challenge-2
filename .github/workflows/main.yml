@@ -108,9 +108,9 @@ jobs:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           charts_dir: charts/
           repository: gmaas-github-api 
-          branch: gh-pages
+          branch: main
           target_dir: charts/
           commit_username: guilhermemaas
           commit_email: guilherme.maas@gmail.com
-          app_version: 1.99.0
-          chart_version: 0.99.0
+          app_version: 1.0.1
+          chart_version: 1.0.1
