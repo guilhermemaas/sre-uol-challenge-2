@@ -1,39 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: github_api
+  name: poc-github-api
   namespace: default
   labels:
-    app: github_api
+    app: poc-github-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: github_api
+      app: poc-github-api
   template:
     metadata:
-      name: github_api
+      name: poc-github-api
       labels:
-        app: github_api
+        app: poc-github-api
     spec:
       containers:
-      - name: github_api
+      - name: poc-github-api
         image: gmaas2/sre-uol-github-api:latest
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: http 
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 3
-          failureThreshold: 3
         resources:
           limits:
             memory: "64Mi"

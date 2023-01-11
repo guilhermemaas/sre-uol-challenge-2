@@ -21,20 +21,17 @@ swagger = Swagger(app)
 
 github_base_url = 'https://api.github.com'
 
-
-app_envs = {
-    'environment': os.getenv('GITHUB_API_ENV'), #dev/prod
-    'log_level': os.getenv('GITHUB_API_LOG_LEVEL'), #DEBUG, INFO, WARNING, ERROR, CRITICAL, INFO
-    'github_base_url': os.getenv('GITHUB_API_BASE_URL') #Exemplo: https://api.github.com
-}
+GITHUB_API_ENV = os.getenv('GITHUB_API_ENV') #dev/prod
+GITHUB_API_LOG_LEVEL = os.getenv('GITHUB_API_LOG_LEVEL') #DEBUG, INFO, WARNING, ERROR, CRITICAL, INFO
+GITHUB_API_BASE_URL = os.getenv('GITHUB_API_BASE_URL') #Exemplo: https://api.github.com
 
 #Definição de log level conforme ambiente (dev/prod)
-if app_envs['environment'] == 'dev' or app_envs['log_level'] == 'DEBUG':
+if GITHUB_API_ENV == 'dev' or GITHUB_API_LOG_LEVEL == 'DEBUG':
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
-elif app_envs['environment'] == 'prod' or app_envs['log_level'] == 'WARNING':
+elif GITHUB_API_ENV == 'prod' or GITHUB_API_LOG_LEVEL == 'WARNING':
     logging.basicConfig(level=logging.WARNING, format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
-elif app_envs['log_level'] in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL', 'INFO']:
-    logging.basicConfig(level=app_envs['log_level'], format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+elif GITHUB_API_LOG_LEVEL in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL', 'INFO']:
+    logging.basicConfig(level=GITHUB_API_LOG_LEVEL, format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 else:
     app.logger.info('Nenhum nível de log foi declarado em variáveis de ambiente. Será ignorado.')
 
@@ -87,9 +84,9 @@ def health():
     print(response.status_code)
 
     if response.status_code == 200:
-        return str(response.status_code), 'API GitHub Ok'
+        return 'Healthy'
     else:
-        return str(response.status_code), 'API GitHub indisponível'
+        return 'Unhealthy'
 
 
 @app.route('/userinfo/<username>', methods=['GET'])
