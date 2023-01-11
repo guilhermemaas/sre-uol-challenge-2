@@ -91,4 +91,26 @@ jobs:
           context: ./app/
           file: ./app/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/poc-github-api:latest    
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/poc-github-api:latest 
+
+  helm:
+    name: Helm Chart
+    needs:
+      - pytest
+      - coverage
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Publish Helm Chart
+        uses: stefanprodan/helm-gh-pages@master
+        with:
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          charts_dir: charts/
+          repository: gmaas-github-api 
+          branch: gh-pages
+          target_dir: charts/
+          commit_username: guilhermemaas
+          commit_email: guilherme.maas@gmail.com
+          app_version: 1.99.0
+          chart_version: .99.0
