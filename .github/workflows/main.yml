@@ -113,4 +113,4 @@ jobs:
           commit_username: guilhermemaas
           commit_email: guilherme.maas@gmail.com
           app_version: 1.99.0
-          chart_version: .99.0
+          chart_version: 0.99.0
