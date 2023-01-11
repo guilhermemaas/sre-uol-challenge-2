@@ -7,6 +7,7 @@ class GitHubApi:
         self.github_user = github_user
         self.github_base_url = github_base_url
 
+
     def get_github_user_info(self) -> dict:
         """
         Retorna todos os dados de um usuário público do Github através do endpoint /users
@@ -18,6 +19,7 @@ class GitHubApi:
         
         return response.json()
 
+
     def get_github_user_repos(self) -> list:
         """
         Retorna todos os repositórios públicos de um usuário do Github
@@ -28,6 +30,7 @@ class GitHubApi:
         response = requests.get(URL)
         
         return response.json()
+
 
     def get_github_user_gists(self) -> list:
         """

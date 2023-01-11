@@ -1,0 +1,27 @@
+global:
+  scrape_interval: 15s #Tempo para coletar nos endpoints /metrics.
+  scrape_timeout: 5s
+  evaluation_interval: 15s
+  external_labels:
+    app: github-api
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+        labels:
+          grupo: "prometheus"
+  - job_name: github-api
+    scrape_interval: 5s
+    scrape_timeout: 2s
+    scheme: http
+    metrics_path: /metrics
+    static_configs:
+      - targets: [gmaas-github-api:5000]
+        labels:
+          grupo: "github-api"
+alerting:
+  alertmanagers:
+    - scheme: http
+      static_configs:
+        - targets:
+          - 'alert-manager:9093'

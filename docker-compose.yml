@@ -2,7 +2,7 @@
 version: '3.4'
 services:
   gmaas-github-api:
-    image: gmaas2/gmaas-github-api:latest
+    image: gmaas2/github-api:latest
     ports:
       - 5000:5000
     environment:
@@ -15,9 +15,8 @@ services:
     image: prom/prometheus:v2.22.0
     depends_on:
       - gmaas-github-api
-    #volumes:
-    #  - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    #  - ./alert-rules.yml:/etc/prometheus/alert-rules.rules
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks: 
       - gmaas-github-api_network
     ports:
@@ -30,12 +29,8 @@ services:
       - prometheus
     networks: 
       - gmaas-github-api_network  
-  alert-manger:
+  alert-manager:
     image: prom/alertmanager:v0.21.0
-    #volumes: 
-    #  - ./alert-manager.yml:/etc/prometheus/alert-manager.yml
-    #command:
-    #  - '--config.file=/etc/prometheus/alert-manager.yml'
     ports: 
       - 9093:9093
     depends_on:

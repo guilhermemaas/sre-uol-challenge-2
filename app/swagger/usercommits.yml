@@ -1,4 +1,4 @@
-summary: "/userinfo"
+summary: "/user/<username>/commits"
 description: "Retorna informações referentes aos últimos commits/contribuições de um usuário no GitHub"
 produces:
 - "application/json"

@@ -1,7 +1,7 @@
 
 
-Thanks/Obrigado! {{ .Chart.Name }}.
+Obrigado por instalar!!! {{ .Chart.Name }}.
 Release {{ .Release.Name }}.
-For more information/Para mais informações:
+Para mais informações:
 $ helm status {{ .Release.Name }}
 $ helm get all {{ .Release.Name }}

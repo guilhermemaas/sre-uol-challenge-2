@@ -8,7 +8,7 @@ from datetime import date
 from flasgger import Swagger
 from flasgger.utils import swag_from
 from werkzeug.exceptions import HTTPException
-from github import GitHubApi
+from domain.github import GitHubApi
 
 
 app = Flask(__name__)
@@ -21,7 +21,7 @@ swagger = Swagger(app)
 
 github_base_url = 'https://api.github.com'
 
-#Instanciando variáveis com variáveis de ambiente (Jaeger, Log Level, etc)
+#To-do: Instanciando variáveis com variáveis de ambiente (Jaeger, Log Level, etc).
 JAEGER_HOST = os.getenv('JAGER_HOST')
 JAEGER_PORT = os.getenv('JAEGER_PORT')
 JAEGER_SERVICE_NAME = os.getenv('github-api')
@@ -84,10 +84,11 @@ def health():
     github_base_url = 'https://api.github.com'
     URL = f'{github_base_url}/users/github'
     
-    response = requests.get(URL)
-
-    print(response.status_code)
-
+    try:
+        response = requests.get(URL)
+    except Exception as err:
+        app.logger.error(str(err))
+    
     if response.status_code == 200:
         return 'Healthy'
     else:
@@ -102,7 +103,7 @@ def read():
     return 'Ready'
 
 
-@app.route('/userinfo/<username>', methods=['GET'])
+@app.route('/user/<username>/info', methods=['GET'])
 @swag_from("swagger/userinfo.yml")
 def userinfo(username):
     """
@@ -124,6 +125,8 @@ def userinfo(username):
     #Instância um objeto para chamada na api do GitHub contendo as informações de usuário URL base do GitHub
     github_request = GitHubApi(github_username, github_base_url)
     
+    logging.info(f'Buscando dados de perfil do usuário {github_username}.')
+
     #Recebe um dicionário de dados com as informações padrão da API do GitHub (/users)
     try:
         github_user_info_default = github_request.get_github_user_info()
@@ -147,7 +150,7 @@ def userinfo(username):
     return jsonify(github_user_info)
 
 
-@app.route('/userrepos/<username>', methods=['GET'])
+@app.route('/user/<username>/repos', methods=['GET'])
 @swag_from("swagger/userrepos.yml")
 def userrepos(username):
     """
@@ -176,6 +179,8 @@ def userrepos(username):
     #Instância um objeto para chamada na api do GitHub contendo as informações de usuário URL base do GitHub
     github_request = GitHubApi(github_username, github_base_url)
     
+    logging.info(f'Buscando repositórios públicos do usuário {github_username}.')
+
     #Recebe um dicionário de dados com as informações padrão da API do GitHub (/users)
     try:
         github_user_repos_default = github_request.get_github_user_repos()
@@ -216,7 +221,7 @@ def userrepos(username):
     return jsonify(github_user_repos)
 
 
-@app.route('/usergists/<username>', methods=['GET'])
+@app.route('/user/<username>/gists', methods=['GET'])
 @swag_from("swagger/usergists.yml")
 def usergists(username):
     """
@@ -239,6 +244,8 @@ def usergists(username):
     #Instância um objeto para chamada na api do GitHub contendo as informações de usuário URL base do GitHub
     github_request = GitHubApi(github_username, github_base_url)
     
+    logging.info(f'Buscando gists públicos do usuário {github_username}.')
+
     #Recebe um dicionário de dados com as informações padrão da API do GitHub (/users)
     try:
         github_user_gists_default = github_request.get_github_user_gists()
@@ -268,7 +275,7 @@ def usergists(username):
     return jsonify(github_user_gists)
 
 
-@app.route('/usercommits/<username>', methods=['GET'])
+@app.route('/user/<username>/commits', methods=['GET'])
 @swag_from("swagger/usercommits.yml")
 def usercommits(username):
     """
@@ -291,6 +298,8 @@ def usercommits(username):
     #Instância um objeto para chamada na api do GitHub contendo as informações de usuário URL base do GitHub
     github_request = GitHubApi(github_username, github_base_url)
     
+    logging.info(f'Buscando últimos commits/contribuições do usuário {github_username}.')
+
     #Recebe um dicionário de dados com as informações padrão da API do GitHub (/users/username/events)
     try:
         github_user_events_default = github_request.get_github_user_events()

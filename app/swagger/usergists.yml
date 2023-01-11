@@ -1,4 +1,4 @@
-summary: "/usergists"
+summary: "/user/<username>/gists"
 description: "Retorna informações referentes aos gists de um usuário do GitHub"
 produces:
 - "application/json"

@@ -1,4 +1,4 @@
-summary: "/userrepos"
+summary: "/user/<username>/repos"
 description: "Retorna informações referentes aos repositórios públicos de um usuário do GitHub"
 produces:
 - "application/json"

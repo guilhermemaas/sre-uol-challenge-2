@@ -1,5 +1,5 @@
 container:
-  replicas: 3
+  replicas: 2
   imagePullPolicy: Always
   livenessProbe:
     enabled: true
