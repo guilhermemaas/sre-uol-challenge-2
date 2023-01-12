@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - "main"
+  
+env:
+  run_id: ${GITHUB_RUN_NUMBER}
       
 jobs:
   pytest:
@@ -112,5 +115,5 @@ jobs:
           target_dir: charts/
           commit_username: guilhermemaas
           commit_email: guilherme.maas@gmail.com
-          app_version: 1.0.${{ GITHUB_RUN_ID }}
-          chart_version: 1.0.${{ GITHUB_RUN_ID }}
+          app_version: 1.0.${{ env.run_id }}
+          chart_version: 1.0.${{ env.run_id }}
