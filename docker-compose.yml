@@ -3,9 +3,13 @@ version: '3.4'
 services:
   gmaas-github-api:
     image: gmaas2/github-api:latest
+    build:
+      dockerfile: Dockerfile
+      context: app/
     ports:
       - 5000:5000
     environment:
+      GITHUB_API_LOG_LEVEL: "DEBUG"
       prometheus.io/scrape: "true"
       prometheus.io/path: "/metrics"
       prometheus.io/port: "5000"
