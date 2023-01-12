@@ -9,7 +9,7 @@ on:
       - "main"
   
 env:
-  run_id: ${GITHUB_RUN_NUMBER}
+  run_id: ${ github.run_number}
       
 jobs:
   pytest:
@@ -38,6 +38,7 @@ jobs:
         run: |
           cd app
           python -m pytest
+          echo ${{ env.run_id }}
                   
   coverage:
     name: Code Coverage
