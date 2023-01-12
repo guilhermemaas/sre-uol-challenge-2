@@ -63,7 +63,7 @@ jobs:
         run: |
           cd app
           coverage run -m pytest
-          coverage report
+          coverage report --omit=tests/conftest.py,tests/test_app.py
 
 
   build:
