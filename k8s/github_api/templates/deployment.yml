@@ -39,7 +39,7 @@ spec:
             scheme: {{ .livenessProbe.httpGet.Scheme }}
           timeoutSeconds: {{ .livenessProbe.timeoutSeconds }}
           failureThreshold: {{ .livenessProbe.failureThreshold }}
-          periodSeconds: {{ .livenessProbe.periodSeconds }} #Default 60. Esse tempo de 300 seg é por conta do Rate Limit da API do Github. A ideia é não bloquear o acesso.
+          periodSeconds: {{ .livenessProbe.periodSeconds }} #Default 60. Esse tempo é por conta do Rate Limit da API do Github. A ideia é não bloquear o acesso.
           successThreshold: {{ .livenessProbe.successThreshold }}
           initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds }}
         {{- end }}
