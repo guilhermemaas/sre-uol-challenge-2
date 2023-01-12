@@ -9,8 +9,8 @@ on:
       - "main"
   
 env:
-  run_id: ${ github.run_number}
-      
+  run_id: ${GITHUB_RUN_NUMBER}
+
 jobs:
   pytest:
     name: Unit testing Pytest
