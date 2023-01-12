@@ -155,6 +155,7 @@ Para rodas os testes de unidade com Pytest:
 `python -m pytest --verbosity=1`
 
 Exemplo:
+
 <div>
     <img src="doc/img/pytest.png">
 <div>
@@ -163,9 +164,16 @@ Para verificar o percentual de cobertura dos testes:
 `coverage run -m pytest -W ignore::DeprecationWarning && coverage report --omit=tests/conftest.py,tests/test_app.py`
 
 Exemplo:
+
 <div>
-    <img src="doc/img/promql.png">
+    <img src="doc/img/coverage_pytest.png">
 <div>
 
+Para rodar a aplicação em ambiente local em modo debug:
+`export GITHUB_API_LOG_LEVEL=DEBUG`
+`python app/app.py`
 
-To-do:
+A partir desse momento a aplicação estará disponível em localhost:5000 e no console serão logadas mensagem do sistema, mensagens de erro, e detalhes dos requests.
+
+Para rodar o docker-compose já buildando uma nova imagem:
+`cd sre-uol-challenge-2 && docker-compose up -d`
