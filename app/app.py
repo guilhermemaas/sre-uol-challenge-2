@@ -22,13 +22,8 @@ swagger = Swagger(app)
 github_base_url = 'https://api.github.com'
 
 #To-do: Instanciando variáveis com variáveis de ambiente (Jaeger, Log Level, etc).
-JAEGER_HOST = os.getenv('JAGER_HOST')
-JAEGER_PORT = os.getenv('JAEGER_PORT')
-JAEGER_SERVICE_NAME = os.getenv('github-api')
-
 GITHUB_API_ENV = os.getenv('GITHUB_API_ENV') #dev/prod
 GITHUB_API_LOG_LEVEL = os.getenv('GITHUB_API_LOG_LEVEL') #DEBUG, INFO, WARNING, ERROR, CRITICAL, INFO
-
 
 #Definição de log level conforme ambiente (dev/prod)
 if GITHUB_API_ENV == 'dev' or GITHUB_API_LOG_LEVEL == 'DEBUG':

@@ -77,13 +77,20 @@ Detalhes sobre os métodos da API:
 | GET | /user/{username}/repos | etorna informações referentes aos repositórios públicos de um usuário do GitHub |  Nome do repositório, ID do repositório, Nome completo do repositório, Descrição do repositório, Login do owner/dono do repositório, URL git do repositório, URL ssh do repositório, URL com listagem de commits no repositório, Data de criação, Último push/alteração, Branch default/padrão, Número de Issues em aberto |
 | GET | /user/{username}/gists | Retorna informações referentes aos gists de um usuário do GitHub |  ID do gist, URL do gist, Arquivo(s), Owner/Dono do gist, Data/Hora de criação, Data/Hora de última atualização |
 | GET | /user/{username}/commits | Retorna informações referentes aos últimos commits/contribuições de um usuário no GitHub |  ID do evento, ID do repositório, Nome do repositório, URL do repositório, URL do commit, Mensagem do commit, Autor do commit, Data/Hora do Push |
-
+| GET | /metrics | Retorna métricas em tempo de execução para monitoramento(Prometheus) | python_gc_objects_collected_total, python_gc_objects_uncollectable_total, python_gc_collections_total, python_info, process_virtual_memory_bytes, process_resident_memory_bytes, process_start_time_seconds, process_cpu_seconds_total, process_open_fds, process_max_fds, flask_exporter_info, flask_http_request_duration_seconds_bucket, flask_http_request_duration_seconds_created, flask_http_request_total, flask_http_request_created, flask_http_request_exceptions_total |
+| GET | /health | Retorna um status se a aplicação está "saudável | Caso esteja tudo ok, retornará o status HTTP 200 |
+| GET | /read | Retorna um status se a aplicação está pronta para receber requisições | Caso esteja tudo ok, retornará o status HTTP 200 |
 
 <br>
 
 ## Pipeline:
 
-O build da aplicação ocorre de forma automática através do GitHub Actions toda vez que um novo código é adicionado. Os detalhes dos últimos builds podem ser visualizados neste [link](https://github.com/guilhermemaas/sre-uol-challenge-2/actions). 
+O build da aplicação ocorre de forma automática através do GitHub Actions toda vez que um novo código é adicionado. Os detalhes dos últimos builds podem ser visualizados neste [link](https://github.com/guilhermemaas/sre-uol-challenge-2/actions). Etapas atuais de CI:
+
+1. Testes unitários: Utilizando o PyTest, os casos de teste são executados e a pipeline pode "quebrar" caso algum cenário não esteja de acordo.
+2. Verificação de Cobertura dos testes: Utilizando o Coverage, uma verificação de percentual de cobertura do código é realizada e o pipeline ser interrompido caso essa cobertura não atinha o esperado. Tendo processo similar ao Quality Gate do SonarQube.
+3. Image Docker: Utilizando o Dockerfile do diretório apps, uma imagem docker é construído e posteriormente enviada para o DockerHub.
+4. Helm chart: Por fim, com as etapas anteriores concluídas, um pacote Helm é gerado e enviado para outro repositório git, e o pacote é publicado no ArtifactHUB.
 
 <div>
     <img src="doc/img/github_actions.png">
