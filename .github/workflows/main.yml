@@ -112,5 +112,5 @@ jobs:
           target_dir: charts/
           commit_username: guilhermemaas
           commit_email: guilherme.maas@gmail.com
-          app_version: 1.0.16
-          chart_version: 1.0.16
+          app_version: 1.0.${{ GITHUB_RUN_ID }}
+          chart_version: 1.0.${{ GITHUB_RUN_ID }}
