@@ -3,7 +3,9 @@
 
 ## Sobre:
 
-Uma API desenvolvida em Python/Flask e tem como objetivo extrair algumas informações úteis de um usuário da API pública do GitHub.
+Uma API desenvolvida em Python/Flask que tem como objetivo extrair algumas informações úteis de um usuário da API pública do GitHub.
+
+Foi um desafio proposto, detalhes neste repositório: https://github.com/sre-team/challenge
 
 Links importantes:
 
