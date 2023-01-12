@@ -140,18 +140,23 @@ Caso queira fazer uma simulação local, rodando alguns requests por algum tempo
 ## Desenvolvimento:
 
 Primeiramente, clone o repositório localmente:
+
 `git clone https://github.com/guilhermemaas/sre-uol-challenge-2.git && cd sre-uol-challenge-2/app`
 
 Crie um venv Python para instalar de forma isolada as dependências com o pip:
+
 `python -m venv venv`
 
 Ative o Ambiente virtual:
+
 `source venv/bin/activate`
 
 Instale as dependências do arquivo requirements.txt:
+
 `pip install requirements.txt`
 
 Para rodas os testes de unidade com Pytest:
+
 `python -m pytest --verbosity=1`
 
 Exemplo:
@@ -161,6 +166,7 @@ Exemplo:
 <div>
 
 Para verificar o percentual de cobertura dos testes:
+
 `coverage run -m pytest -W ignore::DeprecationWarning && coverage report --omit=tests/conftest.py,tests/test_app.py`
 
 Exemplo:
@@ -170,10 +176,12 @@ Exemplo:
 <div>
 
 Para rodar a aplicação em ambiente local em modo debug:
+
 `export GITHUB_API_LOG_LEVEL=DEBUG`
 `python app/app.py`
 
 A partir desse momento a aplicação estará disponível em localhost:5000 e no console serão logadas mensagem do sistema, mensagens de erro, e detalhes dos requests.
 
 Para rodar o docker-compose já buildando uma nova imagem:
+
 `cd sre-uol-challenge-2 && docker-compose up -d`
