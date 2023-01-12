@@ -25,7 +25,11 @@ spec:
     spec:
       containers:
       - name: {{ $.Release.Name }}
+        {{- if eq .customImage.enabled false}}
         image: gmaas2/github-api:latest
+        {{- else }}
+        image: {{ .customImage.image }}
+        {{- end }}
         imagePullPolicy: {{ .imagePullPolicy }}
         {{- if eq .livenessProbe.enabled true }}
         livenessProbe:

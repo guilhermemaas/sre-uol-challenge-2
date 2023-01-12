@@ -40,6 +40,14 @@ Caso queira desinstalar a aplicação:
 
 `helm uninstall my-gmaas-github-api`
 
+
+### Instalação manual com Helm
+
+Estando no diretório raíz do projeto (Nesse caso não é necessário nem adicionar, nem atualizar os repositórios helm locais):
+
+`cd k8s && helm install --debug gmaas-github-api ./github_api/`
+
+
 ### Docker:
 
 Clone o repositório:

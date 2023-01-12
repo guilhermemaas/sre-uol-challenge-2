@@ -95,16 +95,7 @@ jobs:
           file: ./app/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:latest
-
-      - name: Build and Push Build ID
-        uses: docker/build-push-action@v3
-        env:
-          IMAGE_TAG: ${GITHUB_RUN_NUMBER}
-        with:
-          context: ./app/
-          file: ./app/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:$IMAGE_TAG           
+       
 
   helm:
     name: Helm Chart
@@ -125,5 +116,5 @@ jobs:
           target_dir: charts/
           commit_username: guilhermemaas
           commit_email: guilherme.maas@gmail.com
-          app_version: 1.0.${{ env.run_id }}
-          chart_version: 1.0.${{ env.run_id }}
+          app_version: 2.0.0
+          chart_version: 2.0.0

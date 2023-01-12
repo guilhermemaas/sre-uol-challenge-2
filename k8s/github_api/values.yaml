@@ -1,6 +1,9 @@
 container:
   replicas: 2
   imagePullPolicy: Always
+  customImage: 
+    enabled: false
+    image: "CustomTag"
   livenessProbe:
     enabled: true
     httpGet:
@@ -56,4 +59,4 @@ service:
       targetPort: 5000
 
 prometheus:
-  enabled: true
+  enabled: false
