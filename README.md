@@ -178,6 +178,7 @@ Exemplo:
 Para rodar a aplicação em ambiente local em modo debug:
 
 `export GITHUB_API_LOG_LEVEL=DEBUG`
+
 `python app/app.py`
 
 A partir desse momento a aplicação estará disponível em localhost:5000 e no console serão logadas mensagem do sistema, mensagens de erro, e detalhes dos requests.
