@@ -189,7 +189,7 @@ def userrepos(username):
     #campos desejados
     for repo in github_user_repos_default:
         github_temp_repo = {
-            'name': repo['name'],
+            'name': str(repo['name']).lower(),
             'id': repo['id'],
             'full_name': repo['full_name'],
             'description': repo['description'],
