@@ -37,7 +37,7 @@ jobs:
       - name: Testes unitários
         run: |
           cd app
-          python -m pytest
+          python -m python -m pytest --verbosity=1
                   
   coverage:
     name: Code Coverage
@@ -94,7 +94,7 @@ jobs:
           context: ./app/
           file: ./app/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:${GITHUB_RUN_NUMBER}
        
 
   helm:
