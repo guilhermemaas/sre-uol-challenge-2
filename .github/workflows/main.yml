@@ -94,7 +94,7 @@ jobs:
           context: ./app/
           file: ./app/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:${{ steps.meta.outputs.labels }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:${GITHUB_RUN_NUMBER}
        
 
   helm:
