@@ -37,7 +37,7 @@ jobs:
       - name: Testes unitários
         run: |
           cd app
-          python -m python -m pytest --verbosity=1
+          python -m pytest --verbosity=1
                   
   coverage:
     name: Code Coverage
