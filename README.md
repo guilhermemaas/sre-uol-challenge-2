@@ -204,7 +204,7 @@ A partir desse momento a aplicação estará disponível em localhost:5000 e no 
 
 Para rodar o docker-compose já buildando uma nova imagem:
 
-`cd sre-uol-challenge-2 && docker-compose up -d`
+`cd sre-uol-challenge-2 && docker-compose up -d --build`
 <br>
 <div id='todo'/>
 
