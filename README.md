@@ -14,14 +14,14 @@ Links importantes:
 [Imagem Docker no Docker Hub](https://hub.docker.com/r/gmaas2/github-api/tags)
 <br>
 
-## Sumário:
+## Tópicos:
 1. [Instalando e rodando a aplicação](#install)
 2. [Documentação](#doc)
 3. [Pipeline](#ci)
 4. [Monitoramento](#mon)
 5. [Desenvolvimento](#dev)
 6. [TODO - Pontos de melhoria](#todo)
-<br>
+
 <div id='install'/>
 
 ## Instalando e rodando a aplicação: <a name="install"></a>
@@ -72,6 +72,7 @@ Da mesma maneira, a aplicação estará disponível localmente na porta 5000, e 
 Caso queira desinstalar:
 
 `docker-compose down`
+
 <br>
 <div id='doc'/>
 
@@ -99,7 +100,7 @@ Detalhes sobre os métodos da API:
 | GET | /metrics | Retorna métricas em tempo de execução para monitoramento(Prometheus) | python_gc_objects_collected_total, python_gc_objects_uncollectable_total, python_gc_collections_total, python_info, process_virtual_memory_bytes, process_resident_memory_bytes, process_start_time_seconds, process_cpu_seconds_total, process_open_fds, process_max_fds, flask_exporter_info, flask_http_request_duration_seconds_bucket, flask_http_request_duration_seconds_created, flask_http_request_total, flask_http_request_created, flask_http_request_exceptions_total |
 | GET | /health | Retorna um status se a aplicação está "saudável" | Caso esteja tudo ok, retornará o status HTTP 200 e uma mensagem "Healthy" |
 | GET | /read | Retorna um status se a aplicação está pronta para receber requisições | Caso esteja tudo ok, retornará o status HTTP 200 |
-<br>
+
 <div id='ci'/>
 
 ## Pipeline:
