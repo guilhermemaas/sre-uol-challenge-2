@@ -74,6 +74,8 @@ jobs:
     needs: 
       - pytest
       - coverage
+    env:
+      TAG: ${GITHUB_RUN_NUMBER}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -90,7 +92,7 @@ jobs:
 
       - name: Set Tag
         id: repository
-        run: echo "tag=${GITHUB_RUN_NUMBER} > $GITHUB_ENV"
+        run: echo "TAG=${GITHUB_RUN_NUMBER} >> $GITHUB_ENV"
 
       - name: Build and Push Latest
         uses: docker/build-push-action@v3
@@ -98,7 +100,7 @@ jobs:
           context: ./app/
           file: ./app/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:${{ env.tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:${{ env.TAG }}
        
 
   helm:
