@@ -131,7 +131,6 @@ jobs:
           context: ./app/
           push: true
           tags: |
-            # dynamically set the branch name as a prefix
             type=sha,prefix={{branch}}-
           labels: ${{ steps.meta.outputs.labels }}
 
