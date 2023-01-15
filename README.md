@@ -73,7 +73,6 @@ Caso queira desinstalar:
 
 `docker-compose down`
 
-<br>
 <div id='doc'/>
 
 ## Documentação: <a name="doc"></a>
