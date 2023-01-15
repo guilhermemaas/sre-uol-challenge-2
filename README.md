@@ -33,7 +33,7 @@ Adicione o repositório:
 
 Instale o chart:
 
-`helm install my-gmaas-github-api gmaas-github-api/gmaas-github-api --version 1.0.16`
+`helm install my-gmaas-github-api gmaas-github-api/gmaas-github-api`
 
 Para acessar a aplicação localmente rode o comando abaixo:
 
