@@ -78,6 +78,10 @@ jobs:
       TAG: ${GITHUB_RUN_NUMBER}
     runs-on: ubuntu-latest
     steps:
+      - name: Set environmental variables
+        run: |
+          echo "TAG=${GITHUB_RUN_NUMBER} >> $GITHUB_ENV"
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -89,10 +93,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Set Tag
-        id: repository
-        run: echo "TAG=${GITHUB_RUN_NUMBER} >> $GITHUB_ENV"
 
       - name: Build and Push Latest
         uses: docker/build-push-action@v3
