@@ -139,7 +139,6 @@ jobs:
       - pytest
       - coverage
       - build
-      - push_to_registry
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
