@@ -12,18 +12,17 @@ Links importantes:
 [Helm chart no Artifact Hub](https://artifacthub.io/packages/helm/gmaas-github-api/gmaas-github-api?modal=install)
 
 [Imagem Docker no Docker Hub](https://hub.docker.com/r/gmaas2/github-api/tags)
-
 <br>
 
-# Sumário:
+## Sumário:
 1. [Instalando e rodando a aplicação](#install)
 2. [Documentação](#doc)
 3. [Pipeline](#ci)
 4. [Monitoramento](#mon)
 5. [Desenvolvimento](#dev)
 6. [TODO - Pontos de melhoria](#todo)
-
 <br>
+<div id='install'/>
 
 ## Instalando e rodando a aplicação: <a name="install"></a>
 ### Helm/k8s:
@@ -73,8 +72,8 @@ Da mesma maneira, a aplicação estará disponível localmente na porta 5000, e 
 Caso queira desinstalar:
 
 `docker-compose down`
-
 <br>
+<div id='doc'/>
 
 ## Documentação: <a name="doc"></a>
 
@@ -100,10 +99,10 @@ Detalhes sobre os métodos da API:
 | GET | /metrics | Retorna métricas em tempo de execução para monitoramento(Prometheus) | python_gc_objects_collected_total, python_gc_objects_uncollectable_total, python_gc_collections_total, python_info, process_virtual_memory_bytes, process_resident_memory_bytes, process_start_time_seconds, process_cpu_seconds_total, process_open_fds, process_max_fds, flask_exporter_info, flask_http_request_duration_seconds_bucket, flask_http_request_duration_seconds_created, flask_http_request_total, flask_http_request_created, flask_http_request_exceptions_total |
 | GET | /health | Retorna um status se a aplicação está "saudável" | Caso esteja tudo ok, retornará o status HTTP 200 e uma mensagem "Healthy" |
 | GET | /read | Retorna um status se a aplicação está pronta para receber requisições | Caso esteja tudo ok, retornará o status HTTP 200 |
-
 <br>
+<div id='ci'/>
 
-## Pipeline: <a name="ci"></a>
+## Pipeline:
 
 O build da aplicação ocorre de forma automática através do GitHub Actions toda vez que um novo código é adicionado. Os detalhes dos últimos builds podem ser visualizados neste [link](https://github.com/guilhermemaas/sre-uol-challenge-2/actions). Etapas atuais de CI:
 
@@ -118,10 +117,10 @@ O build da aplicação ocorre de forma automática através do GitHub Actions to
 
 Caminho do arquivo .yaml da pipeline: 
 [.github/workflows/main.yml](https://github.com/guilhermemaas/sre-uol-challenge-2/blob/main/.github/workflows/main.yml)
-
 <br>
+<div id='mon'/>
 
-## Monitoramento: <a name="mon"></a>
+## Monitoramento:
 
 A aplicação possui um endpoint de "Healthcheck" /health que retorna um status da aplicação para a plataforma de orquestração. Além disso, um segundo endpoint /metrics (Utilizando um Flask exporter), que tem a capacidade de exportar métricas de performance em tempo de execução para o Prometheus, conforme exemplo abaixo:
 
@@ -154,10 +153,10 @@ Tempo médio de resposta (últimos 30 seg.) - Tempo médio de resposta das requi
 Caso queira fazer uma simulação local, rodando alguns requests por algum tempo, execute o comando abaixo:
 
 `while true; do curl http://localhost:5000/apidocs; sleep 0.5; done;`
-
 <br>
+<div id='dev'/>
 
-## Desenvolvimento: <a name="dev"></a>
+## Desenvolvimento:
 
 Primeiramente, clone o repositório localmente:
 
@@ -206,13 +205,14 @@ A partir desse momento a aplicação estará disponível em localhost:5000 e no 
 Para rodar o docker-compose já buildando uma nova imagem:
 
 `cd sre-uol-challenge-2 && docker-compose up -d`
-
 <br>
+<div id='todo'/>
 
-## TODO: <a name="todo"></a>
+## TODO:
 
 - [ ] Testes: Melhorar testes unitários/integração com mais cenários e mock de chamadas pra api do github.
 - [ ] Pipeline/Helm: Sincronizar tag da imagem com app version do chart {{ .Chart.AppVersion }} e {{ .Values.image.tag }}.
 - [ ] Monitoramento: Adicionar suporte a traces com OpenTracing e Jaeger.
 - [ ] Monitoramento: Criar exemplos de alertas no Alert Maneger.
-- [ ] Log: Injetar no log os IDs de spans relacionados ao mesmo trace.
+- [ ] Log: Injetar no log os IDs de spans relacionados ao mesmo trace (Afinal mutias vezes é mais complicado achar do que resolver um problema :laughing:).
+- [ ] (Pipeline): Integrar com ferramentas de DAST/SAST para análise de código, libs e imagens base (SonarQube + Snyk).
