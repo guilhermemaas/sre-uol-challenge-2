@@ -214,5 +214,5 @@ Para rodar o docker-compose já buildando uma nova imagem:
 - [ ] Pipeline/Helm: Sincronizar tag da imagem com app version do chart {{ .Chart.AppVersion }} e {{ .Values.image.tag }}.
 - [ ] Monitoramento: Adicionar suporte a traces com OpenTracing e Jaeger.
 - [ ] Monitoramento: Criar exemplos de alertas no Alert Maneger.
-- [ ] Log: Injetar no log os IDs de spans relacionados ao mesmo trace (Afinal mutias vezes é mais complicado achar do que resolver um problema :laughing:).
+- [ ] Log: Injetar no log os IDs de spans relacionados ao mesmo trace (Afinal muitas vezes é mais complicado achar do que resolver um problema :laughing:).
 - [ ] (Pipeline): Integrar com ferramentas de DAST/SAST para análise de código, libs e imagens base (SonarQube + Snyk).
