@@ -88,13 +88,17 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Set Tag
+        id: repository
+        run: echo "tag=${GITHUB_RUN_NUMBER} > $GITHUB_ENV"
+
       - name: Build and Push Latest
         uses: docker/build-push-action@v3
         with:
           context: ./app/
           file: ./app/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/github-api:${{ env.tag }}
        
 
   helm:
