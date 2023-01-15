@@ -131,8 +131,7 @@ jobs:
           context: ./app/
           push: true
           tags: |
-            type=sha,prefix={{branch}}-
-          labels: ${{ steps.meta.outputs.labels }}
+            type=sha,enable=true,priority=100,prefix=sha-,suffix=,format=short
 
   helm:
     name: Helm Chart
