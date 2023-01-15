@@ -1,5 +1,7 @@
 import json
 
+# TODO:
+#   Melhorar testes unitários/integração com mais cenários e mock de chamadas pra api do github
 
 def test_index(app, client):
     

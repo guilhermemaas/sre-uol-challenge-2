@@ -15,7 +15,17 @@ Links importantes:
 
 <br>
 
-## Instalando e rodando a aplicação:
+# Sumário:
+1. [Instalando e rodando a aplicação](#install)
+2. [Documentação](#doc)
+3. [Pipeline](#ci)
+4. [Monitoramento](#mon)
+5. [Desenvolvimento](#dev)
+6. [TODO - Pontos de melhoria](#todo)
+
+<br>
+
+## Instalando e rodando a aplicação: <a name="install"></a>
 ### Helm/k8s:
 
 Adicione o repositório:
@@ -66,7 +76,7 @@ Caso queira desinstalar:
 
 <br>
 
-## Documentação:
+## Documentação: <a name="doc"></a>
 
 Swagger: http://localhost:5000/apidocs
 
@@ -93,12 +103,12 @@ Detalhes sobre os métodos da API:
 
 <br>
 
-## Pipeline:
+## Pipeline: <a name="ci"></a>
 
 O build da aplicação ocorre de forma automática através do GitHub Actions toda vez que um novo código é adicionado. Os detalhes dos últimos builds podem ser visualizados neste [link](https://github.com/guilhermemaas/sre-uol-challenge-2/actions). Etapas atuais de CI:
 
-1. Testes unitários: Utilizando o PyTest, os casos de teste são executados e a pipeline pode "quebrar" caso algum cenário não esteja de acordo.
-2. Verificação de Cobertura dos testes: Utilizando o Coverage, uma verificação de percentual de cobertura do código é realizada e o pipeline ser interrompida caso essa cobertura não atinha o esperado. Tendo processo similar ao Quality Gate do SonarQube.
+1. Testes unitários/integração: Utilizando o PyTest, os casos de teste são executados e a pipeline pode "quebrar" caso algum cenário não esteja de acordo.
+2. Verificação de Cobertura dos testes: Utilizando o Coverage, uma verificação de percentual de cobertura do código é realizada e o pipeline ser interrompida caso essa cobertura não atinha o esperado. Tendo processo similar ao Quality Gate do SonarQube no que se rerefere a cobertura.
 3. Imagem Docker: Utilizando o Dockerfile do diretório "app", uma imagem docker é construída e enviada para o DockerHub.
 4. Helm chart: Por fim, com as etapas anteriores concluídas, um pacote Helm é gerado e enviado para outro repositório git, e o pacote é publicado no ArtifactHUB.
 
@@ -111,7 +121,7 @@ Caminho do arquivo .yaml da pipeline:
 
 <br>
 
-## Monitoramento:
+## Monitoramento: <a name="mon"></a>
 
 A aplicação possui um endpoint de "Healthcheck" /health que retorna um status da aplicação para a plataforma de orquestração. Além disso, um segundo endpoint /metrics (Utilizando um Flask exporter), que tem a capacidade de exportar métricas de performance em tempo de execução para o Prometheus, conforme exemplo abaixo:
 
@@ -147,7 +157,7 @@ Caso queira fazer uma simulação local, rodando alguns requests por algum tempo
 
 <br>
 
-## Desenvolvimento:
+## Desenvolvimento: <a name="dev"></a>
 
 Primeiramente, clone o repositório localmente:
 
@@ -196,3 +206,13 @@ A partir desse momento a aplicação estará disponível em localhost:5000 e no 
 Para rodar o docker-compose já buildando uma nova imagem:
 
 `cd sre-uol-challenge-2 && docker-compose up -d`
+
+<br>
+
+## TODO: <a name="todo"></a>
+
+- [ ] Testes: Melhorar testes unitários/integração com mais cenários e mock de chamadas pra api do github.
+- [ ] Pipeline/Helm: Sincronizar tag da imagem com app version do chart {{ .Chart.AppVersion }} e {{ .Values.image.tag }}.
+- [ ] Monitoramento: Adicionar suporte a traces com OpenTracing e Jaeger.
+- [ ] Monitoramento: Criar exemplos de alertas no Alert Maneger.
+- [ ] Log: Injetar no log os IDs de spans relacionados ao mesmo trace.

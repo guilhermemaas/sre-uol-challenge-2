@@ -20,13 +20,13 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"
-        prometheus.io/port: "5000"
+        prometheus.io/port: "5000" #TODO: Melhorar template pra adicionar porta custom durante o discovery do Prometheus
       {{- end }}
     spec:
       containers:
       - name: {{ $.Release.Name }}
-        {{- if eq .customImage.enabled false}}
-        image: gmaas2/github-api:latest
+        {{- if eq .customImage.enabled false}} #TODO: (Pipeline) Sincronizar tag da imagem com app version do chart
+        image: gmaas2/github-api:latest 
         {{- else }}
         image: {{ .customImage.image }}
         {{- end }}
